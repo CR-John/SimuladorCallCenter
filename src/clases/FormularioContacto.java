@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.StringTokenizer;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
 /**
@@ -19,7 +20,7 @@ import javax.swing.JOptionPane;
  */
 public class FormularioContacto extends javax.swing.JFrame {
 
-    final int INITIAL_WEIGHT = 450; // Ancho inicial de la ventana
+    final int INITIAL_WEIGHT = 470; // Ancho inicial de la ventana
     final int INITIAL_HEIGHT = 400; // Alto inicial de la ventana
     final String TITLE = "Simulador de Call Cnter"; // Título de la ventana
     final String SEARCH = "Buscar"; // Texto de búsqueda por defecto
@@ -29,16 +30,19 @@ public class FormularioContacto extends javax.swing.JFrame {
     private Libreta libreta; // Lista de contactos
     private String[] stringContactos; // Arreglo para almacenar los contactos como cadenas
     private String cedula; // Cédula del contacto
-    private Queue<String> pendientes = new LinkedList<>(); // Cola para manejar contactos
+    private Queue<Contacto> pendientes = new LinkedList<>(); // Cola para manejar contactos
     private Stack<Contacto> atendidos; //Pila de cotactos atendidos
     private boolean estadoB = false; // Estado del botón
     private boolean estadoPanel = true; // Estado del panel
     private int selTipo = 0; // Tipo de selección (mostrar cédulas o todo)
-
+    private DefaultListModel<String> lmPendientes = new DefaultListModel<>();
+    private DefaultListModel<String> lmAtendidos = new DefaultListModel<>(); // clases encargadas de manipular las listas
+    
+    // Constructor de GUI
     public FormularioContacto() {
-        initComponents();
+        initComponents(); //inicializa componentes
         archivo = new Archivo();
-        libreta = new Libreta();
+        libreta = new Libreta(); //busca los archvos en el folder datos
 
         setLocationRelativeTo(null);
         super.setSize(INITIAL_WEIGHT, INITIAL_HEIGHT);
@@ -142,15 +146,15 @@ public class FormularioContacto extends javax.swing.JFrame {
         listaContactos = new javax.swing.JList();
         panelLlamadas = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        jListPendientes = new javax.swing.JList<>();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jList2 = new javax.swing.JList<>();
+        jListAtendidos = new javax.swing.JList<>();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        btnContactar = new javax.swing.JButton();
+        btnSiguiente = new javax.swing.JButton();
+        txtAteTelefono = new javax.swing.JTextField();
+        txtAteNombre = new javax.swing.JTextField();
         lblTiempo = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
@@ -279,7 +283,7 @@ public class FormularioContacto extends javax.swing.JFrame {
                 .addGroup(panelContactoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(bBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
                 .addGroup(panelContactoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(textCedula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
@@ -402,16 +406,16 @@ public class FormularioContacto extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(panelControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelControlLayout.createSequentialGroup()
-                        .addComponent(searchText)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bLimpiarBuscar))
-                    .addGroup(panelControlLayout.createSequentialGroup()
                         .addComponent(bAbrir)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(bImportar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(panelMostrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(13, 13, 13))
+                        .addComponent(panelMostrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelControlLayout.createSequentialGroup()
+                        .addComponent(searchText)
+                        .addGap(13, 13, 13)
+                        .addComponent(bLimpiarBuscar)))
+                .addContainerGap())
         );
         panelControlLayout.setVerticalGroup(
             panelControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -423,17 +427,16 @@ public class FormularioContacto extends javax.swing.JFrame {
                             .addComponent(bAbrir)
                             .addComponent(bImportar)))
                     .addComponent(panelMostrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(panelControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelControlLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
-                        .addComponent(searchText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(14, 14, 14))
-                    .addGroup(panelControlLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bLimpiarBuscar)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                .addGroup(panelControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(searchText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bLimpiarBuscar))
+                .addGap(13, 13, 13))
         );
 
+        panelLibreta.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        listaContactos.setBorder(null);
         listaContactos.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 listaContactosValueChanged(evt);
@@ -447,15 +450,15 @@ public class FormularioContacto extends javax.swing.JFrame {
             panelLibretaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelLibretaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
         panelLibretaLayout.setVerticalGroup(
             panelLibretaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelLibretaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout panelListaContLayout = new javax.swing.GroupLayout(panelListaCont);
@@ -463,56 +466,62 @@ public class FormularioContacto extends javax.swing.JFrame {
         panelListaContLayout.setHorizontalGroup(
             panelListaContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelListaContLayout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(panelContacto, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelListaContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelControl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelLibreta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(panelListaContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(panelListaContLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(panelLibreta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(panelControl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         panelListaContLayout.setVerticalGroup(
             panelListaContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelListaContLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelListaContLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(panelListaContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(panelContacto, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panelContacto, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(panelListaContLayout.createSequentialGroup()
                         .addComponent(panelControl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panelLibreta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(panelLibreta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGap(18, 18, 18))
         );
 
-        jScrollPane2.setViewportView(jList1);
+        jScrollPane2.setViewportView(jListPendientes);
 
-        jScrollPane3.setViewportView(jList2);
+        jScrollPane3.setViewportView(jListAtendidos);
 
         jLabel8.setText("Pendientes:");
 
         jLabel9.setText("Atendidos:");
 
-        jButton1.setText("Contactar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnContactar.setText("Contactar");
+        btnContactar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnContactarActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Siguiente");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnSiguiente.setText("Siguiente");
+        btnSiguiente.setEnabled(false);
+        btnSiguiente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnSiguienteActionPerformed(evt);
             }
         });
 
-        jTextField1.setText("Telefono");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        txtAteTelefono.setEditable(false);
+        txtAteTelefono.setText("Telefono");
+        txtAteTelefono.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                txtAteTelefonoActionPerformed(evt);
             }
         });
 
-        jTextField2.setText("Nombre");
+        txtAteNombre.setEditable(false);
+        txtAteNombre.setText("Nombre");
 
         lblTiempo.setFont(new java.awt.Font("Franklin Gothic Heavy", 1, 18)); // NOI18N
         lblTiempo.setText("0:00:00");
@@ -529,16 +538,15 @@ public class FormularioContacto extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelLlamadasLayout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(44, 44, 44)
-                        .addComponent(jTextField2))
+                        .addComponent(txtAteTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtAteNombre))
                     .addGroup(panelLlamadasLayout.createSequentialGroup()
                         .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jButton3)
                             .addComponent(lblTiempo))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton4)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jButton4)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelLlamadasLayout.createSequentialGroup()
@@ -551,9 +559,9 @@ public class FormularioContacto extends javax.swing.JFrame {
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLlamadasLayout.createSequentialGroup()
-                        .addComponent(jButton1)
+                        .addComponent(btnContactar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton2)
+                        .addComponent(btnSiguiente)
                         .addGap(10, 10, 10)))
                 .addContainerGap())
         );
@@ -564,30 +572,30 @@ public class FormularioContacto extends javax.swing.JFrame {
                     .addGroup(panelLlamadasLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton2)
-                            .addComponent(jButton1))
+                            .addComponent(btnSiguiente)
+                            .addComponent(btnContactar))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLlamadasLayout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel8)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(3, 3, 3)))
+                        .addGap(35, 35, 35)
+                        .addComponent(jLabel8)
+                        .addGap(6, 6, 6)))
                 .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panelLlamadasLayout.createSequentialGroup()
-                        .addGap(24, 24, 24)
+                        .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtAteTelefono, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                            .addComponent(txtAteNombre))
+                        .addGap(18, 18, 18)
                         .addComponent(lblTiempo)
                         .addGap(18, 18, 18)
                         .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButton3)
                             .addComponent(jButton4))))
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -599,16 +607,16 @@ public class FormularioContacto extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(panelListaCont, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panelLlamadas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(10, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(panelListaCont, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
                 .addComponent(panelLlamadas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(92, Short.MAX_VALUE))
+                .addGap(14, 14, 14))
         );
 
         pack();
@@ -693,8 +701,9 @@ public class FormularioContacto extends javax.swing.JFrame {
     private void bBusqueAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bBusqueAActionPerformed
         this.estadoB = !estadoB;
         if (estadoB) {
-            int w = INITIAL_WEIGHT + panelLibreta.getWidth() + 5;
-            super.setSize(w, INITIAL_HEIGHT);
+            int w = INITIAL_WEIGHT + panelLibreta.getWidth() + 10;
+            int h = INITIAL_HEIGHT + panelLlamadas.getHeight()  +10;
+            super.setSize(w, h);
 
             //Llenar lista de contactos//
             //Las siguientes validaciones evitan que se limpie la infomacion en pantalla al esconder la lista
@@ -767,23 +776,41 @@ public class FormularioContacto extends javax.swing.JFrame {
     private void searchTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextKeyReleased
         listar();
     }//GEN-LAST:event_searchTextKeyReleased
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
-        //cola.add(TITLE)
-        for (String stringContacto : stringContactos) {
-            pendientes.add(stringContacto);
+    private void actualizarListas(){
+        lmPendientes.clear();
+        for (Contacto c : pendientes) {
+            lmPendientes.addElement(c.getNombreCompleto());
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+        jListPendientes.setModel(lmPendientes);
+        btnContactar.setEnabled(pendientes.isEmpty());
+        btnSiguiente.setEnabled(!pendientes.isEmpty());
+    }
+    private void btnContactarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContactarActionPerformed
+        lmPendientes = new DefaultListModel<>();
+        for (Contacto c : libreta.getLibreta()) {
+            pendientes.add(c);
+            lmPendientes.addElement(c.getNombreCompleto());
+        }
+        jListPendientes.setModel(lmPendientes);
+        btnContactar.setEnabled(false);
+        btnSiguiente.setEnabled(true);
+        
+        txtAteTelefono.setText("Telefono");
+        txtAteNombre.setText("Nombre Completo");
+        
+//        pendientes.add(stringContacto);
+    }//GEN-LAST:event_btnContactarActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        String siguiente = pendientes.poll();
-        JOptionPane.showMessageDialog(null, siguiente);
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
+        Contacto siguiente = pendientes.poll();
+        txtAteTelefono.setText(siguiente.getTelefono());
+        txtAteNombre.setText(siguiente.getNombreCompleto());
+        actualizarListas();
+    }//GEN-LAST:event_btnSiguienteActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void txtAteTelefonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAteTelefonoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txtAteTelefonoActionPerformed
     /**
      * @param args the command line arguments
      */
@@ -825,9 +852,9 @@ public class FormularioContacto extends javax.swing.JFrame {
     private javax.swing.JButton bImportar;
     private javax.swing.JButton bLimpiar;
     private javax.swing.JButton bLimpiarBuscar;
+    private javax.swing.JButton btnContactar;
+    private javax.swing.JButton btnSiguiente;
     private javax.swing.ButtonGroup gMostrar;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
@@ -839,13 +866,11 @@ public class FormularioContacto extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JList<String> jList1;
-    private javax.swing.JList<String> jList2;
+    private javax.swing.JList<String> jListAtendidos;
+    private javax.swing.JList<String> jListPendientes;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JLabel lblTiempo;
     private javax.swing.JList listaContactos;
     private javax.swing.JRadioButton mostrarCed;
@@ -864,5 +889,7 @@ public class FormularioContacto extends javax.swing.JFrame {
     private javax.swing.JTextField textFechaNac;
     private javax.swing.JTextField textNombre;
     private javax.swing.JTextField textTelefono;
+    private javax.swing.JTextField txtAteNombre;
+    private javax.swing.JTextField txtAteTelefono;
     // End of variables declaration//GEN-END:variables
 }
