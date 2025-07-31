@@ -37,13 +37,22 @@ public class FormularioContacto extends javax.swing.JFrame {
     private int selTipo = 0; // Tipo de selección (mostrar cédulas o todo)
     private DefaultListModel<String> lmPendientes = new DefaultListModel<>();
     private DefaultListModel<String> lmAtendidos = new DefaultListModel<>(); // clases encargadas de manipular las listas
+    private int segundosLlamada = 0;
+    private javax.swing.Timer timerLlamada;
     
     // Constructor de GUI
     public FormularioContacto() {
         initComponents(); //inicializa componentes
         archivo = new Archivo();
         libreta = new Libreta(); //busca los archvos en el folder datos
-
+        atendidos = new Stack<>();
+        
+        timerLlamada = new javax.swing.Timer(1000, e -> {
+        segundosLlamada++;
+        lblTiempo.setText(formatTiempo(segundosLlamada));
+        });
+        timerLlamada.setInitialDelay(0);
+        
         setLocationRelativeTo(null);
         super.setSize(INITIAL_WEIGHT, INITIAL_HEIGHT);
         super.setTitle(TITLE);
@@ -61,7 +70,7 @@ public class FormularioContacto extends javax.swing.JFrame {
     public void listar() {
         listar(this.selTipo);
     }
-
+    
     /**
      * Lista los contactos según el tipo especificado.
      *
@@ -156,8 +165,9 @@ public class FormularioContacto extends javax.swing.JFrame {
         txtAteTelefono = new javax.swing.JTextField();
         txtAteNombre = new javax.swing.JTextField();
         lblTiempo = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        btnLlamar = new javax.swing.JButton();
+        btnColgar = new javax.swing.JButton();
+        jLabel10 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(412, 634));
@@ -522,39 +532,58 @@ public class FormularioContacto extends javax.swing.JFrame {
 
         txtAteNombre.setEditable(false);
         txtAteNombre.setText("Nombre");
+        txtAteNombre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtAteNombreActionPerformed(evt);
+            }
+        });
 
-        lblTiempo.setFont(new java.awt.Font("Franklin Gothic Heavy", 1, 18)); // NOI18N
+        lblTiempo.setFont(new java.awt.Font("Verdana", 1, 18)); // NOI18N
         lblTiempo.setText("0:00:00");
 
-        jButton3.setText("Llamar");
+        btnLlamar.setText("Llamar");
+        btnLlamar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLlamarActionPerformed(evt);
+            }
+        });
 
-        jButton4.setText("Colgar");
+        btnColgar.setText("Colgar");
+        btnColgar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnColgarActionPerformed(evt);
+            }
+        });
+
+        jLabel10.setText("Contacto en Atencion:");
 
         javax.swing.GroupLayout panelLlamadasLayout = new javax.swing.GroupLayout(panelLlamadas);
         panelLlamadas.setLayout(panelLlamadasLayout);
         panelLlamadasLayout.setHorizontalGroup(
             panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLlamadasLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelLlamadasLayout.createSequentialGroup()
-                        .addComponent(txtAteTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtAteNombre))
+                        .addContainerGap()
+                        .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panelLlamadasLayout.createSequentialGroup()
+                                .addComponent(txtAteTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtAteNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(panelLlamadasLayout.createSequentialGroup()
+                                .addGap(7, 7, 7)
+                                .addComponent(btnLlamar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnColgar))
+                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(panelLlamadasLayout.createSequentialGroup()
-                        .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButton3)
-                            .addComponent(lblTiempo))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton4)))
+                        .addGap(53, 53, 53)
+                        .addComponent(lblTiempo)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel8)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelLlamadasLayout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addGap(139, 139, 139))
-                    .addGroup(panelLlamadasLayout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9)
@@ -569,18 +598,21 @@ public class FormularioContacto extends javax.swing.JFrame {
             panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelLlamadasLayout.createSequentialGroup()
                 .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelLlamadasLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnSiguiente)
-                            .addComponent(btnContactar))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel9)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLlamadasLayout.createSequentialGroup()
                         .addGap(35, 35, 35)
                         .addComponent(jLabel8)
-                        .addGap(6, 6, 6)))
+                        .addGap(6, 6, 6))
+                    .addGroup(panelLlamadasLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(panelLlamadasLayout.createSequentialGroup()
+                                .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(btnSiguiente)
+                                    .addComponent(btnContactar))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel9)))
+                        .addGap(18, 18, 18)))
                 .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -593,8 +625,8 @@ public class FormularioContacto extends javax.swing.JFrame {
                         .addComponent(lblTiempo)
                         .addGap(18, 18, 18)
                         .addGroup(panelLlamadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton3)
-                            .addComponent(jButton4))))
+                            .addComponent(btnLlamar)
+                            .addComponent(btnColgar))))
                 .addContainerGap(27, Short.MAX_VALUE))
         );
 
@@ -614,7 +646,7 @@ public class FormularioContacto extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(panelListaCont, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(panelLlamadas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(14, 14, 14))
         );
@@ -801,16 +833,72 @@ public class FormularioContacto extends javax.swing.JFrame {
 //        pendientes.add(stringContacto);
     }//GEN-LAST:event_btnContactarActionPerformed
 
+    private Contacto contactoEnAtencion = null;
+    
+    private void actualizarAtendidos() {
+        lmAtendidos.clear();
+        for (Contacto c : atendidos) {
+            lmAtendidos.addElement(c.getNombreCompleto());
+        }
+        jListAtendidos.setModel(lmAtendidos);
+    }
+    
     private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
+        if (contactoEnAtencion != null) {
+            atendidos.push(contactoEnAtencion);
+            actualizarAtendidos();
+        }
+        
         Contacto siguiente = pendientes.poll();
-        txtAteTelefono.setText(siguiente.getTelefono());
-        txtAteNombre.setText(siguiente.getNombreCompleto());
+        if (siguiente != null) {
+            contactoEnAtencion = siguiente;
+            txtAteTelefono.setText(siguiente.getTelefono());
+            txtAteNombre.setText(siguiente.getNombreCompleto());
+        } else {   // no hay  pendientes
+            contactoEnAtencion = null;
+            txtAteTelefono.setText("Telefono");
+            txtAteNombre.setText("Nombre Completo");
+            btnSiguiente.setEnabled(false);
+        }
         actualizarListas();
+        
+        if (timerLlamada.isRunning()) {
+            timerLlamada.stop();
+        }
+        segundosLlamada = 0;
+        timerLlamada.start();
     }//GEN-LAST:event_btnSiguienteActionPerformed
 
     private void txtAteTelefonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAteTelefonoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtAteTelefonoActionPerformed
+
+    private String formatTiempo(int totalSegundos) {
+        int horas = totalSegundos / 3600;
+        int minutos = (totalSegundos % 3600) / 60;
+        int segundos = totalSegundos % 60;
+        if (horas > 0) {
+            return String.format("%02d:%02d:%02d", horas, minutos, segundos);
+        } else {
+            return String.format("%02d:%02d", minutos, segundos);
+        }
+    }
+    
+    private void btnLlamarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLlamarActionPerformed
+        if (!timerLlamada.isRunning()) {
+            timerLlamada.start();
+        }
+    }//GEN-LAST:event_btnLlamarActionPerformed
+
+    private void btnColgarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnColgarActionPerformed
+        if (timerLlamada.isRunning()) {
+        timerLlamada.stop();
+    }
+    }//GEN-LAST:event_btnColgarActionPerformed
+
+    private void txtAteNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAteNombreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAteNombreActionPerformed
     /**
      * @param args the command line arguments
      */
@@ -852,12 +940,13 @@ public class FormularioContacto extends javax.swing.JFrame {
     private javax.swing.JButton bImportar;
     private javax.swing.JButton bLimpiar;
     private javax.swing.JButton bLimpiarBuscar;
+    private javax.swing.JButton btnColgar;
     private javax.swing.JButton btnContactar;
+    private javax.swing.JButton btnLlamar;
     private javax.swing.JButton btnSiguiente;
     private javax.swing.ButtonGroup gMostrar;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
